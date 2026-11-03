@@ -43,6 +43,7 @@ h2{font-size:21px;color:var(--navy);margin:6px 0 4px}
 .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;background:#FFFBEB;color:#92400E;margin-bottom:6px}
 footer{text-align:center;color:var(--grey);font-size:13px;padding:10px 16px 30px}
 footer b{color:var(--teal)}
+.inp{display:block;width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 10px;border:1px solid #CBD5E1;border-radius:8px;font-size:16px;font-family:inherit}
 </style>
 </head>
 <body>
@@ -57,6 +58,7 @@ footer b{color:var(--teal)}
 
 <script>
 const MAIL = 'info@crespo.hu';
+const HOOK = 'https://hook.eu2.make.com/nmcfw2likny1l2jxmh33o6tp4785mn98';
 const SUBJ = 'PMT munkafüzet kérése – 2026.11.04.';
 const BODY = 'Kérem a 2026. november 4-i PMT előadás munkafüzeteit (I. és II. rész) erre az e-mail címre.\n\nNév:\nIroda:\n\nHírlevél a Pmt. változásairól: IGEN / NEM (kérjük, törölje, ami nem kell)';
 
@@ -134,12 +136,16 @@ function render(){
     if(s.type==='cta'){
       const href=`mailto:${MAIL}?subject=${encodeURIComponent(SUBJ)}&body=${encodeURIComponent(BODY)}`;
       h+=`<p class="lead">A két munkafüzet (I. rész: megfelelés, II. rész: ellenőrzés) tartalmazza a teljes anyagot, kipipálható ellenőrzőlistákkal, a 9 pontos dosszié-listával és a 30 napos felkészülési tervvel.</p>
-      <a class="cta" id="mailbtn" href="${href}">✉️  Munkafüzetek kérése e-mailben</a>
-      <div class="q" id="mailfb" style="display:none"><div class="t">Nem nyílt meg a levelezője? Küldje el kézzel:</div>
-        <div style="margin:6px 0">Címzett: <b>${MAIL}</b> <button class="opt" style="width:auto;padding:4px 10px" data-copy="${MAIL}">Másolás</button></div>
-        <div style="margin:6px 0">Tárgy: <b>PMT munkafüzet</b> <button class="opt" style="width:auto;padding:4px 10px" data-copy="PMT munkafüzet">Másolás</button></div>
-        <div class="note">A levél szövege tetszőleges. A tárgyban szerepeljen: „PMT munkafüzet”. A válaszlevél a két letöltési linket tartalmazza.</div></div>
-      <p class="note">A gomb megnyit egy előre megírt levelet az ${MAIL} címre – csak el kell küldenie. A munkafüzeteket a válaszlevélben küldjük.</p>
+      <form id="wf" class="q" autocomplete="on">
+        <label class="t" for="wf-name">Név</label><input id="wf-name" name="name" required maxlength="80" class="inp">
+        <label class="t" for="wf-email">E-mail cím</label><input id="wf-email" name="email" type="email" required maxlength="120" class="inp">
+        <label class="t" for="wf-office">Iroda (nem kötelező)</label><input id="wf-office" name="office" maxlength="120" class="inp">
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0;font-size:14px"><input type="checkbox" id="wf-nl" style="margin-top:3px"> Kérek hírlevelet a Pmt. változásairól (bármikor leiratkozhatok).</label>
+        <input name="website" id="wf-hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <button type="submit" class="cta" id="wf-btn" style="width:100%;border:0;cursor:pointer">✉️  Munkafüzetek kérése</button>
+        <div id="wf-msg" class="note" style="margin-top:8px"></div>
+      </form>
+      <p class="note">A két letöltési linket néhány percen belül e-mailben küldjük. Ha nem érkezik meg, nézze meg a Spam mappát, vagy írjon az <a href="${href}">${MAIL}</a> címre.</p>
       <a class="cta alt" href="https://crespo.hu" target="_blank" rel="noopener">crespo.hu</a>
       <div class="q"><div class="t">Kérdése van a saját irodájáról?</div>Írjon nekünk: info@crespo.hu</div>`;
     } else {
@@ -163,8 +169,18 @@ function render(){
     }
     sec.innerHTML=h; main.appendChild(sec);
   });
-  const mb=document.getElementById('mailbtn'), mf=document.getElementById('mailfb');
-  if(mb) mb.addEventListener('click',()=>{ mf.style.display='block'; });
+  const wf=document.getElementById('wf');
+  if(wf) wf.onsubmit=async e=>{ e.preventDefault();
+    const g=id=>document.getElementById(id), msg=g('wf-msg'), btn=g('wf-btn');
+    if(g('wf-hp').value) return;
+    const email=g('wf-email').value.trim(), name=g('wf-name').value.trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg.textContent='Kérjük, adjon meg érvényes e-mail címet.';return;}
+    btn.disabled=true; btn.textContent='Küldés…';
+    const body=new URLSearchParams({name,email,office:g('wf-office').value.trim(),newsletter:g('wf-nl').checked?'IGEN':'NEM'});
+    try{ await fetch(HOOK,{method:'POST',mode:'no-cors',body});
+      wf.innerHTML='<div class="t">Köszönjük!</div>A munkafüzetek linkjét elküldtük ide: <b>'+esc(email)+'</b>. Ha pár percen belül nem érkezik meg, nézze meg a Spam mappát.';
+    }catch(err){ btn.disabled=false; btn.textContent='✉️  Munkafüzetek kérése'; msg.innerHTML='Nem sikerült elküldeni (nincs internet?). Próbálja újra, vagy írjon az <b>'+MAIL+'</b> címre.'; }
+  };
   main.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{
     const t=b.dataset.copy, done=()=>{b.textContent='Másolva ✓'; setTimeout(()=>b.textContent='Másolás',1500);};
     if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(done,()=>{b.textContent=t;});}
