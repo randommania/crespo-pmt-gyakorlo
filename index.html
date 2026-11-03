@@ -58,7 +58,7 @@ footer b{color:var(--teal)}
 <script>
 const MAIL = 'info@crespo.hu';
 const SUBJ = 'PMT munkafüzet kérése – 2026.11.04.';
-const BODY = 'Kérem a 2026. november 4-i PMT előadás munkafüzeteit (I. és II. felvonás) erre az e-mail címre.\n\nNév:\nIroda:\n\nHírlevél a Pmt. változásairól: IGEN / NEM (kérjük, törölje, ami nem kell)';
+const BODY = 'Kérem a 2026. november 4-i PMT előadás munkafüzeteit (I. és II. rész) erre az e-mail címre.\n\nNév:\nIroda:\n\nHírlevél a Pmt. változásairól: IGEN / NEM (kérjük, törölje, ami nem kell)';
 
 const S = [
  {id:'start', label:'Hol tart?', title:'Hol tart most az irodája?', lead:'Jelölje meg, ami igaz Önre. Nincs rossz válasz – a végén látja, hol érdemes kezdeni.', type:'yn', items:[
@@ -95,7 +95,7 @@ const S = [
    {t:'A NAV_PMT25 tényállás mezőjének hossza?', o:['Legfeljebb 200 karakter','Legfeljebb 999 karakter','Korlátlan'], a:1, e:'Legfeljebb 999 karakter; ha nem elég, Word-melléklet csatolható.'},
    {t:'Az ügyfél adatváltozás-bejelentési határideje?', o:['5 munkanap','30 nap','Év végéig'], a:0}],
    result:n=>`${n} / 10 helyes válasz.`},
- {id:'onell', label:'19 kérdés', title:'19 kérdés – önellenőrzés', lead:'A könyvvizsgálói kamarai (MKVK) Pmt.–Kit. kérdőív alapján, könyvelőirodára igazítva. Válaszoljon úgy, ahogy ma dokumentummal bizonyítani tudná. Ha egy kérdés Önre nem vonatkozik, jelöljön igent.', type:'yn', items:[
+ {id:'onell', label:'19 kérdés', title:'19 kérdés – önellenőrzés', lead:'Válaszoljon úgy, ahogy ma dokumentummal bizonyítani tudná. Ha egy kérdés Önre nem vonatkozik, jelöljön igent.', type:'yn', items:[
    'Belső szabályzat: megvan a hatályos és minden korábbi verzió?',
    'Kockázati besorolás: minden ügyfélnél rögzített a kategória ÉS az indoklás?',
    'Ügyfél és képviselő: a kötelező adatok rögzítve – a régi ügyfeleknél is pótolva?',
@@ -133,11 +133,15 @@ function render(){
     let h=`<h2>${s.title}</h2>${s.lead?`<p class="lead">${s.lead}</p>`:''}`;
     if(s.type==='cta'){
       const href=`mailto:${MAIL}?subject=${encodeURIComponent(SUBJ)}&body=${encodeURIComponent(BODY)}`;
-      h+=`<p class="lead">A két munkafüzet (I. felvonás: megfelelés, II. felvonás: ellenőrzés) tartalmazza a teljes anyagot, kipipálható ellenőrzőlistákkal, a 9 pontos dosszié-listával és a 30 napos felkészülési tervvel.</p>
-      <a class="cta" href="${href}">✉️  Munkafüzetek kérése e-mailben</a>
-      <p class="note">A gomb megnyit egy előre megírt levelet az ${MAIL} címre – csak el kell küldenie. A munkafüzeteket a válaszlevélben küldjük. Ha a gomb nem működik a telefonján, írjon „PMT munkafüzet” tárggyal az ${MAIL} címre.</p>
+      h+=`<p class="lead">A két munkafüzet (I. rész: megfelelés, II. rész: ellenőrzés) tartalmazza a teljes anyagot, kipipálható ellenőrzőlistákkal, a 9 pontos dosszié-listával és a 30 napos felkészülési tervvel.</p>
+      <a class="cta" id="mailbtn" href="${href}">✉️  Munkafüzetek kérése e-mailben</a>
+      <div class="q" id="mailfb" style="display:none"><div class="t">Nem nyílt meg a levelezője? Küldje el kézzel:</div>
+        <div style="margin:6px 0">Címzett: <b>${MAIL}</b> <button class="opt" style="width:auto;padding:4px 10px" data-copy="${MAIL}">Másolás</button></div>
+        <div style="margin:6px 0">Tárgy: <b>PMT munkafüzet</b> <button class="opt" style="width:auto;padding:4px 10px" data-copy="PMT munkafüzet">Másolás</button></div>
+        <div class="note">A levél szövege tetszőleges. A tárgyban szerepeljen: „PMT munkafüzet”. A válaszlevél a két letöltési linket tartalmazza.</div></div>
+      <p class="note">A gomb megnyit egy előre megírt levelet az ${MAIL} címre – csak el kell küldenie. A munkafüzeteket a válaszlevélben küldjük.</p>
       <a class="cta alt" href="https://crespo.hu" target="_blank" rel="noopener">crespo.hu</a>
-      <div class="q"><div class="t">Kérdése van a saját irodájáról?</div>Dr. Crespo Zsuzsanna – zsuzsanna@crespo.hu</div>`;
+      <div class="q"><div class="t">Kérdése van a saját irodájáról?</div>Írjon nekünk: info@crespo.hu</div>`;
     } else {
       s.items.forEach((it,i)=>{
         const k=s.id+i, v=st[k];
@@ -159,7 +163,14 @@ function render(){
     }
     sec.innerHTML=h; main.appendChild(sec);
   });
-  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{st[b.dataset.k]=+b.dataset.v; save(); const cur=current; render(); show(cur,true);});
+  const mb=document.getElementById('mailbtn'), mf=document.getElementById('mailfb');
+  if(mb) mb.addEventListener('click',()=>{ mf.style.display='block'; });
+  main.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{
+    const t=b.dataset.copy, done=()=>{b.textContent='Másolva ✓'; setTimeout(()=>b.textContent='Másolás',1500);};
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(done,()=>{b.textContent=t;});}
+    else{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){}a.remove();}
+  });
+  main.querySelectorAll('.opt[data-k]').forEach(b=>b.onclick=()=>{st[b.dataset.k]=+b.dataset.v; save(); const cur=current; render(); show(cur,true);});
   main.querySelectorAll('.next').forEach(b=>b.onclick=()=>show(b.dataset.go));
 }
 let current=(location.hash||'#start').slice(1);
