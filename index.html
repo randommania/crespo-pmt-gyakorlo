@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PMT gyakorló – Crespo.hu</title>
+<meta name="description" content="Interaktív feladatok a 2026. november 4-i PMT előadáshoz – Dr. Crespo Zsuzsanna, Crespo.hu">
+<meta name="theme-color" content="#0D1A2E">
+<style>
+:root{--teal:#27A99A;--teal-d:#1B7F73;--navy:#0D1A2E;--navy2:#162038;--blue:#1B6B8A;--red:#DC2626;--amber:#F59E0B;--green:#16A34A;--body:#334155;--grey:#64748B;--line:#E2E8F0;--soft:#F8FAFC;--tbg:#E8F5F3}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Calibri,Carlito,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#F1F5F9;color:var(--body);font-size:17px;line-height:1.45}
+header{background:var(--navy);color:#fff;padding:18px 16px 14px;position:relative}
+header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--teal)}
+.kick{font-size:11px;letter-spacing:2.5px;font-weight:700;color:var(--teal);text-transform:uppercase}
+header h1{font-size:23px;line-height:1.15;margin-top:6px}
+header p{color:#9FD9D1;font-size:14px;margin-top:4px}
+nav{position:sticky;top:0;z-index:5;background:var(--navy2);display:flex;gap:6px;overflow-x:auto;padding:8px 10px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:1px solid #2A3A55;background:transparent;color:#CBD5E1;border-radius:18px;padding:7px 13px;font:inherit;font-size:14px;font-weight:700}
+nav button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+main{max-width:640px;margin:0 auto;padding:14px 14px 40px}
+section{display:none}section.on{display:block}
+h2{font-size:21px;color:var(--navy);margin:6px 0 4px}
+.lead{color:var(--grey);font-size:15px;margin-bottom:12px}
+.q{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(13,26,46,.05)}
+.q .t{font-weight:700;color:var(--navy);margin-bottom:10px}
+.q .n{display:inline-block;min-width:26px;height:26px;border-radius:13px;background:var(--teal);color:#fff;text-align:center;font-size:14px;line-height:26px;margin-right:8px;font-weight:700}
+.opts{display:grid;gap:8px}.opts.two{grid-template-columns:1fr 1fr}
+.opt{border:1.5px solid #CBD5E1;background:#fff;border-radius:8px;padding:11px 12px;font:inherit;font-size:16px;text-align:left;color:var(--navy)}
+.opt.sel{border-color:var(--teal);background:var(--tbg)}
+.opt.right{border-color:var(--green);background:#F0FDF4}
+.opt.wrong{border-color:var(--red);background:#FEF2F2}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:10px 12px;font-size:15px}
+.fb.show{display:block}.fb.ok{background:#F0FDF4;color:#166534}.fb.no{background:#FEF2F2;color:#991B1B}.fb.info{background:var(--tbg);color:#115E56}
+.score{background:var(--navy);color:#fff;border-radius:10px;padding:16px;text-align:center;margin:6px 0 14px}
+.score b{display:block;font-size:40px;color:var(--teal);line-height:1.1}
+.score span{color:#CBD5E1;font-size:15px}
+.cta{display:block;width:100%;text-align:center;background:var(--teal);color:#fff;text-decoration:none;font-weight:700;font-size:18px;border-radius:10px;padding:15px;margin:12px 0;border:0}
+.cta.alt{background:#fff;color:var(--teal-d);border:1.5px solid var(--teal)}
+.note{font-size:13px;color:var(--grey)}
+.next{display:block;width:100%;margin-top:6px;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700}
+footer{text-align:center;color:var(--grey);font-size:13px;padding:10px 16px 30px}
+footer b{color:var(--teal)}
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">Számviteli Szakemberek Egyesülete · Vas Vármegyei Szervezet</div>
+  <h1>PMT megfelelés és ellenőrzés – gyakorló</h1>
+  <p>Dr. Crespo Zsuzsanna · 2026. november 4.</p>
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+<footer>Az oldal nem gyűjt adatot: a válaszai csak az Ön telefonján maradnak.<br>Szakmai tájékoztató, nem minősül jogi tanácsadásnak.<br><b>CRESPO</b>.hu</footer>
+
+<script>
+const MAIL = 'info@crespo.hu';
+const SUBJ = 'PMT munkafüzet kérése – 2026.11.04.';
+const BODY = 'Kérem a 2026. november 4-i PMT előadás munkafüzeteit (I. és II. felvonás) erre az e-mail címre.\n\nNév:\nIroda:\n\nHírlevél a Pmt. változásairól: IGEN / NEM (kérjük, törölje, ami nem kell)';
+
+const S = [
+ {id:'start', label:'Hol tart?', title:'Hol tart most az irodája?', lead:'Jelölje meg, ami igaz Önre. Nincs rossz válasz – a végén látja, hol érdemes kezdeni.', type:'yn', items:[
+   'A kijelölt személyünket bejelentettük a NAV-nak (VPOP_KSZ17), és megvan az UJEGYKE-regisztráció.',
+   'Van saját belső szabályzatunk, és megvannak a régi verziói is.',
+   'Minden ügyfelünknél dokumentáltuk a kockázati besorolást és az indokát.',
+   'Az idei kötelező Pmt.-oktatást megtartottuk és dokumentáltuk.',
+   'Kaptunk már NAV PEI megkeresést vagy ellenőrzést.'],
+   result:n=>`${n} / 5 igen. Az első négy pont mindegyike ellenőrzéskor bizonyítandó – a mai előadás mindegyikhez ad teendőt.`},
+ {id:'tipp', label:'Tippeljen', title:'Tippeljen!', lead:'Előbb tippeljen, aztán nézze meg a választ.', type:'mc', items:[
+   {t:'Hány Pmt.-határozat született 2023-ban? (2018-ban: 30)', o:['Kb. 100','Kb. 500','Kb. 1 100','Több mint 3 000'], a:2, e:'1 124 határozat 2023-ban – öt év alatt közel negyvenszeres növekedés.'},
+   {t:'Melyik szolgáltatói kört ellenőrzik a legtöbbet?', o:['Könyvviteli szolgáltatók','Ingatlanosok','Székhelyszolgáltatók','Adótanácsadók'], a:1, e:'A felügyelet közzétett listája szerint: ingatlanosok 2 035, könyvvitel 1 010, székhelyszolgáltató 645, adótanácsadó 131.'},
+   {t:'Mi a leggyakoribb kimenete egy határozatnak?', o:['Bírság','Figyelmeztetés','Kötelezés a hiányosság megszüntetésére'], a:1, e:'Figyelmeztetés 44,3%, kötelezés 40,0%, bírság 15,7% (több év összesítve).'}],
+   src:'Forrás: Crespo – Pmt. referens kurzus 2.0, ellenőrzési statisztika.'},
+ {id:'ih', label:'Igaz vagy hamis', title:'Igaz vagy hamis?', lead:'Villámkör az indulás témájából.', type:'mc', two:true, items:[
+   {t:'A KSZ17-et egyszer kell beküldeni, utána soha többé nincs vele dolgunk.', o:['Igaz','Hamis'], a:1, e:'Új kijelölt személy, módosítás és törlés esetén is újra be kell küldeni.'},
+   {t:'A NAV típusszabályzatát letöltöm, kitöltöm a cégadatokat, és kész a szabályzatom.', o:['Igaz','Hamis'], a:1, e:'A saját működésre kell szabni: kockázati kategóriák, eljárásrend, kijelölt személyek.'},
+   {t:'A kijelölt személy és a kijelölt felelős vezető ugyanazt jelenti.', o:['Igaz','Hamis'], a:1, e:'A kijelölt személyt KSZ17-en jelentjük be, a felelős vezetőt a belső szabályzat jelöli ki.'},
+   {t:'Kis irodában a szerepek egy kézben is lehetnek.', o:['Igaz','Hamis'], a:0, e:'Igen, ha a típusszabályzat megengedi – és minden szerep adatait írásban rögzítjük.'},
+   {t:'Az új szabályzat elkészítése után a régit nyugodtan törölhetem.', o:['Igaz','Hamis'], a:1, e:'Őrizzen meg minden verziót – az ellenőrzés a vizsgált időszakban hatályos szabályzatot kéri.'}]},
+ {id:'gyanu', label:'Gyanús vagy nem?', title:'Gyanús vagy nem?', lead:'Kitalált helyzetek. Egy jel önmagában ritkán dönt – az összes körülményt mérlegeljük, és a döntést írásban rögzítjük.', type:'mc', items:[
+   {t:'Egy építőipari ügyfél havi több millió forintos jóváírásait napokon belül készpénzben felveszi, célt nem tud mondani.', o:['Bejelentés','Fokozott figyelem, tisztázás','Rendben van'], a:0, e:'Szerepel a tipológiában. Tisztázási kísérlet után, ha marad a gyanú: bejelentés a NAV_PMT25 nyomtatványon (ONYA).'},
+   {t:'Egy webshop árbevétele egy kampány után megduplázódott, a reklám- és szállítási költség vele nőtt.', o:['Bejelentés','Fokozott figyelem, tisztázás','Rendben van'], a:2, e:'A bevétellel arányos a költségnövekedés – nincs gyanújel.'},
+   {t:'A tulajdonos 20 millió Ft tagi kölcsönt ad a cégnek, a forrásra vonatkozó kérdésünkre nem válaszol.', o:['Bejelentés','Fokozott figyelem, tisztázás','Rendben van'], a:1, e:'Írásban kérjük a forrásnyilatkozatot. Ha megtagadja: magas kockázat, és a bejelentést mérlegelni kell (NAV_PMT25).'}]},
+ {id:'teszt', label:'Gyorsteszt', title:'Tíz szám – gyorsteszt', lead:'Amit érdemes fejből tudni.', type:'mc', items:[
+   {t:'A VPOP_KSZ17 beküldési határideje a tevékenység megkezdésétől?', o:['5 munkanap','15 nap','30 nap'], a:0},
+   {t:'A TTNYELT (eltérésjelzés) határideje az észleléstől?', o:['5 munkanap','30 nap','Nincs határidő'], a:0},
+   {t:'Legfeljebb milyen régi lehet a jogi személy cégkivonata?', o:['30 nap','90 nap','1 év'], a:0},
+   {t:'Megőrzési idő az üzleti kapcsolat megszűnésétől?', o:['5 év','8 év','10 év'], a:1},
+   {t:'PEP visszatekintési időszak?', o:['6 hónap','1 év','5 év'], a:1},
+   {t:'Magas kockázatú ügyfél adatainak ellenőrzése?', o:['Évente','5 évente','Csak változáskor'], a:0, e:'Magas kockázatnál évente, alacsonynál legalább ötévente (Pmt. 12. § (2)).'},
+   {t:'Szankciós listás találat esetén mikor jelentünk?', o:['Haladéktalanul','30 napon belül','Az éves felülvizsgálatkor'], a:0},
+   {t:'Gyanús ügylet bejelentésének nyomtatványa 2026. június 5-től (ONYA)?', o:['NAV_PMT25','VPOP_KSZ17','AFADREG'], a:0, e:'NAV_PMT25 – ONYA-n, a régi VPOP_PMT17 utódja. Feltétel: UJEGYKE-regisztráció és rendben lévő KSZ17.'},
+   {t:'A NAV_PMT25 tényállás mezőjének hossza?', o:['Legfeljebb 200 karakter','Legfeljebb 999 karakter','Korlátlan'], a:1, e:'Legfeljebb 999 karakter; ha nem elég, Word-melléklet csatolható.'},
+   {t:'Az ügyfél adatváltozás-bejelentési határideje?', o:['5 munkanap','30 nap','Év végéig'], a:0}],
+   result:n=>`${n} / 10 helyes válasz.`},
+ {id:'onell', label:'19 kérdés', title:'19 kérdés – önellenőrzés', lead:'A könyvvizsgálói kamarai (MKVK) Pmt.–Kit. kérdőív alapján, könyvelőirodára igazítva. Válaszoljon úgy, ahogy ma dokumentummal bizonyítani tudná. Ha egy kérdés Önre nem vonatkozik, jelöljön igent.', type:'yn', items:[
+   'Belső szabályzat: megvan a hatályos és minden korábbi verzió?',
+   'Kockázati besorolás: minden ügyfélnél rögzített a kategória ÉS az indoklás?',
+   'Ügyfél és képviselő: a kötelező adatok rögzítve – a régi ügyfeleknél is pótolva?',
+   'Okiratok: másolat vagy lekérdezési eredmény megvan – vagy rögzítve, miért maradt el?',
+   'Tényleges tulajdonos: aláírt TT-nyilatkozat minden tényleges tulajdonosról?',
+   'PEP-nyilatkozat minden tényleges tulajdonosról?',
+   'PEP esetén rögzítve, a Pmt. 4. § (2) mely pontja szerinti közszereplő?',
+   'TT igazoló ellenőrzése: rögzítve, mikor és milyen okmányt mutattak be?',
+   'Kétség a TT-ről: a további intézkedések nyomon követhetők?',
+   'Üzleti kapcsolat: szerződés, kockázati szint, teljesítés, cél rögzítve?',
+   'Monitoring: a változások átvezetése és a figyelés írásos nyoma megvan?',
+   'Magas kockázatú ügyfeleknél évente dokumentált felülvizsgálat?',
+   'A szerződésben benne van az adatváltozás-bejelentési figyelemfelhívás?',
+   'Gyanújel esetén van bejelentés vagy mérlegelési feljegyzés?',
+   'Kijelölt személy: kijelölve, KSZ17-en bejelentve, és aktuális?',
+   'Kijelölték a foglalkoztatottak általi végrehajtásért felelős megfelelési vezetőt (Pmt. 63. § (5))?',
+   'Oktatás: megtartva, jelenléti ívvel, a legutóbbi jogszabályváltozással?',
+   'Nyilvántartás: visszakereshető, védett, a megőrzési idő után törölve?',
+   'Szűrőrendszer: EU és ENSZ szűrés írásban rögzítve, visszakereshetően?'],
+   result:n=> n>=17?`${n} / 19 igen – jó alapok, szúrópróbaszerűen nézze át a dossziékat.`: n>=12?`${n} / 19 igen – célzott pótlás szükséges. Kezdje a 30 napos tervvel (munkafüzet).`:`${n} / 19 igen – rendszerszintű hiány. Érdemes szakértői felülvizsgálatot kérni.`,
+   src:'A pontsávok a Crespo javaslatai, tájékoztató jellegűek.'},
+ {id:'mf', label:'Munkafüzet', title:'Kérje el a munkafüzeteket', type:'cta'}
+];
+
+const st = (()=>{try{return JSON.parse(localStorage.getItem('pmt-gyak')||'{}')}catch(e){return{}}})();
+const save=()=>{try{localStorage.setItem('pmt-gyak',JSON.stringify(st))}catch(e){}};
+const nav=document.getElementById('nav'), main=document.getElementById('main');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+function render(){
+  nav.innerHTML=''; main.innerHTML='';
+  S.forEach((s,si)=>{
+    const b=document.createElement('button'); b.textContent=s.label; b.onclick=()=>show(s.id); b.id='nb-'+s.id; nav.appendChild(b);
+    const sec=document.createElement('section'); sec.id='s-'+s.id;
+    let h=`<h2>${s.title}</h2>${s.lead?`<p class="lead">${s.lead}</p>`:''}`;
+    if(s.type==='cta'){
+      const href=`mailto:${MAIL}?subject=${encodeURIComponent(SUBJ)}&body=${encodeURIComponent(BODY)}`;
+      h+=`<p class="lead">A két munkafüzet (I. felvonás: megfelelés, II. felvonás: ellenőrzés) tartalmazza a teljes anyagot, kipipálható ellenőrzőlistákkal, a 9 pontos dosszié-listával és a 30 napos felkészülési tervvel.</p>
+      <a class="cta" href="${href}">✉️  Munkafüzetek kérése e-mailben</a>
+      <p class="note">A gomb megnyit egy előre megírt levelet az ${MAIL} címre – csak el kell küldenie. A munkafüzeteket a válaszlevélben küldjük. Ha a gomb nem működik a telefonján, írjon „PMT munkafüzet” tárggyal az ${MAIL} címre.</p>
+      <a class="cta alt" href="https://crespo.hu" target="_blank" rel="noopener">crespo.hu</a>
+      <div class="q"><div class="t">Kérdése van a saját irodájáról?</div>Dr. Crespo Zsuzsanna – zsuzsanna@crespo.hu</div>`;
+    } else {
+      s.items.forEach((it,i)=>{
+        const k=s.id+i, v=st[k];
+        if(s.type==='yn'){
+          h+=`<div class="q"><div class="t"><span class="n">${i+1}</span>${esc(it)}</div><div class="opts two">`+['Igen','Nem'].map((o,oi)=>`<button class="opt ${v===oi?'sel':''}" data-k="${k}" data-v="${oi}">${o}</button>`).join('')+`</div></div>`;
+        } else {
+          const answered=v!==undefined;
+          h+=`<div class="q"><div class="t"><span class="n">${i+1}</span>${esc(it.t)}</div><div class="opts ${s.two?'two':''}">`+it.o.map((o,oi)=>{let c=''; if(answered){ if(oi===it.a)c='right'; else if(oi===v)c='wrong';} return `<button class="opt ${c}" data-k="${k}" data-v="${oi}" ${answered?'disabled':''}>${esc(o)}</button>`}).join('')+`</div>`;
+          if(answered){const ok=v===it.a; h+=`<div class="fb show ${ok?'ok':'no'}"><b>${ok?'Helyes.':'Nem egészen.'}</b> ${it.e||('A helyes válasz: '+it.o[it.a]+'.')}</div>`;}
+          h+=`</div>`;
+        }
+      });
+      if(s.result){
+        const done=s.items.every((_,i)=>st[s.id+i]!==undefined);
+        if(done){const n=s.type==='yn'?s.items.filter((_,i)=>st[s.id+i]===0).length:s.items.filter((it,i)=>st[s.id+i]===it.a).length; h+=`<div class="score"><span>Eredmény</span><b>${n}</b><span>${s.result(n)}</span></div>`;}
+      }
+      if(s.src)h+=`<p class="note">${s.src}</p>`;
+      const nx=S[si+1]; if(nx)h+=`<button class="next" data-go="${nx.id}">Tovább: ${nx.label} →</button>`;
+    }
+    sec.innerHTML=h; main.appendChild(sec);
+  });
+  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{st[b.dataset.k]=+b.dataset.v; save(); const cur=current; render(); show(cur,true);});
+  main.querySelectorAll('.next').forEach(b=>b.onclick=()=>show(b.dataset.go));
+}
+let current=(location.hash||'#start').slice(1);
+function show(id,keep){
+  if(!S.find(s=>s.id===id))id='start';
+  current=id;
+  document.querySelectorAll('section').forEach(x=>x.classList.toggle('on',x.id==='s-'+id));
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.id==='nb-'+id));
+  document.getElementById('nb-'+id).scrollIntoView({inline:'center',block:'nearest'});
+  if(!keep){history.replaceState(null,'','#'+id); window.scrollTo(0,0);}
+}
+render(); show(current,true);
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)||'start'));
+</script>
+</body>
+</html>
