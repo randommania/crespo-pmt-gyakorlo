@@ -40,6 +40,7 @@ h2{font-size:21px;color:var(--navy);margin:6px 0 4px}
 .cta.alt{background:#fff;color:var(--teal-d);border:1.5px solid var(--teal)}
 .note{font-size:13px;color:var(--grey)}
 .next{display:block;width:100%;margin-top:6px;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;background:#FFFBEB;color:#92400E;margin-bottom:6px}
 footer{text-align:center;color:var(--grey);font-size:13px;padding:10px 16px 30px}
 footer b{color:var(--teal)}
 </style>
@@ -89,7 +90,7 @@ const S = [
    {t:'Megőrzési idő az üzleti kapcsolat megszűnésétől?', o:['5 év','8 év','10 év'], a:1},
    {t:'PEP visszatekintési időszak?', o:['6 hónap','1 év','5 év'], a:1},
    {t:'Magas kockázatú ügyfél adatainak ellenőrzése?', o:['Évente','5 évente','Csak változáskor'], a:0, e:'Magas kockázatnál évente, alacsonynál legalább ötévente (Pmt. 12. § (2)).'},
-   {t:'Szankciós listás találat esetén mikor jelentünk?', o:['Haladéktalanul','30 napon belül','Az éves felülvizsgálatkor'], a:0},
+   {t:'Szankciós listás találat esetén mikor jelentünk?', o:['Haladéktalanul','30 napon belül','Az éves felülvizsgálatkor'], a:0, e:'Haladéktalanul, a VPOP_KIT17 nyomtatványon (2026. június 5-től ONYA-n).'},
    {t:'Gyanús ügylet bejelentésének nyomtatványa 2026. június 5-től (ONYA)?', o:['NAV_PMT25','VPOP_KSZ17','AFADREG'], a:0, e:'NAV_PMT25 – ONYA-n, a régi VPOP_PMT17 utódja. Feltétel: UJEGYKE-regisztráció és rendben lévő KSZ17.'},
    {t:'A NAV_PMT25 tényállás mezőjének hossza?', o:['Legfeljebb 200 karakter','Legfeljebb 999 karakter','Korlátlan'], a:1, e:'Legfeljebb 999 karakter; ha nem elég, Word-melléklet csatolható.'},
    {t:'Az ügyfél adatváltozás-bejelentési határideje?', o:['5 munkanap','30 nap','Év végéig'], a:0}],
@@ -170,6 +171,7 @@ function show(id,keep){
   document.getElementById('nb-'+id).scrollIntoView({inline:'center',block:'nearest'});
   if(!keep){history.replaceState(null,'','#'+id); window.scrollTo(0,0);}
 }
+const y0=()=>window.scrollY;
 render(); show(current,true);
 window.addEventListener('hashchange',()=>show(location.hash.slice(1)||'start'));
 </script>
